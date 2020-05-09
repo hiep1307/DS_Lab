@@ -1,3 +1,4 @@
+#load data and convert to sparse matrix
 def load_data(data_path):
     def sparse_to_dense(sparse_r_d, vocab_size):
         r_ds = [0.0 for _ in range(vocab_size)]
@@ -38,5 +39,4 @@ def classifying_with_linear_SVMs():
     accuracy = compute_accuracy(predicted_y = predicted_y, expected_y = test_y)
     print('Accuracy: ', accuracy)
 
-if __name__ = 'main':
-    classifying_with_linear_SVMs()    
+classifying_with_linear_SVMs()    
