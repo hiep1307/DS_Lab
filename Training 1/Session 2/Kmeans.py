@@ -116,8 +116,8 @@ class Kmeans:
             self._iteration += 1
             if self.stopping_condition(criterion, threshold):
                 break
+  #compute quality of clustering
     def compute_purity(self):
-        #compute quality of clustering (purity)
         majority_sum = 0
         for cluster in self._clusters:
             member_labels = [member._label for member in cluster._members]
@@ -138,10 +138,9 @@ class Kmeans:
             cj = self._label_count[label] * 1.
             H_C += - cj / N * np.log10(cj / N)
         return I_value * 2. / (H_omega + H_C)
-
-if __name__ = 'main':    
-    kmeans = Kmeans(20)
-    kmeans.load_data('./20news-bydate/words_tfidf.txt')
-    kmeans.run(3, 'max_iters', 500)
-    print('Purity = ', kmeans.compute_purity())
-    print('NMI = ', kmeans.compute_NMI()) 
+  
+kmeans = Kmeans(20)
+kmeans.load_data('./20news-bydate/words_tfidf.txt')
+kmeans.run(3, 'max_iters', 500)
+print('Purity = ', kmeans.compute_purity())
+print('NMI = ', kmeans.compute_NMI()) 
