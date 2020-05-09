@@ -1,4 +1,5 @@
 def load_data(data_path):
+    #load data and convert to sparse matrix
     def sparse_to_dense(sparse_r_d, vocab_size):
         r_ds = [0.0 for _ in range(vocab_size)]
         indices_tfidf = sparse_r_d.split()
@@ -32,5 +33,4 @@ def clustering_with_Kmeans():
     kmeans = KMeans(n_clusters = 20, init = 'random', n_init = 5, tol = 1e-3, random_state= 2018).fit(X)
     labels = kmeans.label_
 
-if __name__ = 'main':
-    clustering_with_Kmeans()
+clustering_with_Kmeans()
