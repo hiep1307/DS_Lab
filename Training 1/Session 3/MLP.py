@@ -6,6 +6,7 @@ class MLP:
         self._vocab_size = vocab_size
         self._hidden_size = hidden_size
     def build_graph(self, NUM_CLASSES):
+        #build model
         self._X = tf.placeholder(tf.float32, shape = [None, self._vocab_size])
         self._real_Y = tf.placeholder(tf.int32, shape = [None, ])
         weights_1 = tf.get_variable(name = 'weights_input_hidden', 
@@ -20,10 +21,12 @@ class MLP:
         biases_2 = tf.get_variable(name = 'biases_hidden_output', 
                                  shape = (NUM_CLASSES), 
                                  initializer = tf.random_normal_initializer(seed = 2018))
+        #hidden activation: sigmoid
         hidden = tf.matmul(self._X, weights_1) + biases_1
         hidden = tf.sigmoid(hidden)
         logits = tf.matmul(hidden, weights_2) + biases_2
         labels_one_hot = tf.one_hot(indices = self._real_Y, depth = NUM_CLASSES, dtype = tf.float32)
+        #loss function: cross entropy
         loss = tf.nn.softmax_cross_entropy_with_logits(labels = labels_one_hot, logits = logits)
         loss = tf.reduce_mean(loss)
         probs = tf.nn.softmax(logits)
@@ -56,6 +59,7 @@ class DataReader:
         self._num_epoch = 0
         self._batch_id = 0
     def next_batch(self):
+        #read next batch
         start = self._batch_size * self._batch_id
         end = start + self._batch_size
         self._batch_id += 1
@@ -70,6 +74,7 @@ class DataReader:
         return self._data[start:end], self._labels[start:end]
 
 def load_dataset():
+    #load train, test set
     with open('./20news-bydate/words_idfs.txt', 'r') as f:
         vocab_size = len(f.read().splitlines())
     train_data_reader = DataReader(data_path = './20news-bydate/20news-train-tfidf.txt',
@@ -79,6 +84,7 @@ def load_dataset():
     return train_data_reader, test_data_reader, vocab_size
 
 def save_parameters(name, value, epoch):
+    #save parameters
     filename = name.replace(':', '-colon-') + '-epoch-{}.txt'.format(epoch)
     if len(value.shape) == 1: #is  a list
         string_form = ','.join([str(number) for number in value])
@@ -90,6 +96,7 @@ def save_parameters(name, value, epoch):
         f.write(string_form)
 
 def restore_parameters(name, epoch):
+    #restore parameters
     filename = name.replace(':', '-colon-') + '-epoch-{}.txt'.format(epoch)
     with open('./save-paras/' + filename, 'r') as f:
         lines = f.read().splitlines()
@@ -100,9 +107,6 @@ def restore_parameters(name, epoch):
     return value
 
 def train_model():
-    
-#     with open('./20news-bydate/words_tfidf.txt') as f:
-#         vocab_size = len(f.read().splitlines())
     #create computation graph
     mlp = MLP(vocab_size = vocab_size, hidden_size = 50)
     predicted_labels, loss = mlp.build_graph(NUM_CLASSES = 20)
@@ -129,12 +133,6 @@ def train_model():
                 )
 
 def test_model():
-#     with open('./20news-bydate/words-idfs.txt', 'r') as f:
-#         vocab_size = len(f.read().splitlines())    
-# #     test_data_reader = DataReader(
-#         data_path = './20news-bydate/20news-test-tfidf.txt'
-#         batch_size = 50
-#         vocab_size = vocab_size)
     #create computation graph
     mlp = MLP(vocab_size = vocab_size, hidden_size = 50)
     predicted_labels, loss = mlp.build_graph(NUM_CLASSES = 20)
@@ -148,7 +146,7 @@ def test_model():
             saved_value = restore_parameters(variable.name, epoch)
             assign_op = variable.assign(saved_value)
             sess.run(assign_op)
-        
+        #test with each batch
         num_true_preds = 0
         while True:
             test_data, test_labels = test_data_reader.next_batch()
