@@ -25,6 +25,7 @@ class DataReader:
         self._batch_id  = 0
         self._num_batch = np.ceil(len(self._data))
     def next_batch(self):
+        # return next batch
         index = np.arange(len(self._data))
         random.seed(self._epoch)
         random.shuffle(index)
@@ -57,6 +58,7 @@ class RNN:
         self._final_tokens = tf.placeholder(tf.int32, shape= [batch_size, ])
 
     def embedding_layer(self, indices):
+        #embedding layer
         pretrained_vectors = []
         pretrained_vectors.append(np.zeros(self._embedding_size))
         np.random.seed(2018)
@@ -71,6 +73,7 @@ class RNN:
         )
         return tf.nn.embedding_lookup(self._embedding_matrix, indices)
     def LSTM_layer(self,embeddings):
+        #LSTM layer
         lstm_cell= tf.contrib.rnn.BasicLSTMCell(self._lstm_size)
         zero_state= tf.zeros(shape= (self._batch_size, self._lstm_size))
         initial_state= tf.contrib.rnn.LSTMStateTuple(zero_state, zero_state)
@@ -99,6 +102,7 @@ class RNN:
         return lstm_outputs_average
 
     def build_graph(self):
+        #build graph
         embeddings = self.embedding_layer(self._data)
         lstm_outputs = self.LSTM_layer(embeddings)
 
@@ -131,6 +135,7 @@ class RNN:
         return train_op
 
 def train_and_evaluate_RNN():
+    #train and evaluate
     with open('./20news-bydate/vocab-raw.txt') as f:
         vocab_size = len(f.read().splitlines())
 
