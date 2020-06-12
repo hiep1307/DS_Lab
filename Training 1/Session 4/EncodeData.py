@@ -4,7 +4,9 @@ from os import listdir
 import re
 
 def gen_data_and_vocab():
+# generate data and vocab
     def collect_data_from(parent_path, newsgroup_list, word_count= None):
+        #collect data
         data = []
         for group_id, newsgroup in enumerate(newsgroup_list):
             dir_path= parent_path + '/' + newsgroup + '/'
@@ -42,6 +44,7 @@ def gen_data_and_vocab():
         f.write('\n'.join(test_data))
 
 def encode_data(data_path, vocab_path):
+    #encode data 
     with open(vocab_path) as f:
         vocab = dict([(word, word_ID + 2) for word_ID, word in enumerate(f.read().splitlines())])
     with open(data_path) as f:
